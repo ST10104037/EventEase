@@ -1,0 +1,53 @@
+﻿<div class="text-center mt-5">
+
+    <h1 style="font-size: 60px; font-weight: bold;">
+        🎉 Welcome to EventEase 🎉
+    </h1>
+
+    <p style="font-size: 22px; margin-top: 20px;">
+        Your all-in-one solution for seamless venue booking and unforgettable events.
+    </p>
+
+    <hr style="margin: 40px auto; width: 60%; border: 2px solid white;" />
+
+    <div class="row mt-5">
+
+        <!-- Venues -->
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>🏛 Venues</h3>
+                <p>Browse and manage stunning venues for any occasion.</p>
+                <a class="btn btn-primary" asp-controller="Venues" asp-action="Index">View Venues</a>
+            </div>
+        </div>
+
+        <!-- Events -->
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>🎊 Events</h3>
+                <p>Create and organize events effortlessly.</p>
+                <a class="btn btn-secondary" asp-controller="Events" asp-action="Index">View Events</a>
+            </div>
+        </div>
+
+        <!-- Bookings -->
+        <div class="col-md-4">
+            <div class="card p-4 text-center">
+                <h3>📅 Bookings</h3>
+                <p>Manage bookings and ensure smooth scheduling.</p>
+                <a class="btn btn-primary" asp-controller="Bookings" asp-action="Index">View Bookings</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-5">
+        <h2>✨ Plan your next event with ease ✨</h2>
+        <p>Create, manage, and book — all in one place.</p>
+        <a class="btn btn-lg btn-secondary mt-3" asp-controller="Events" asp-action="Create">
+            ➕ Create Your First Event
+        </a>
+    </div>
+
+</div>
