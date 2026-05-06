@@ -4,13 +4,21 @@ namespace EventEase.Services
 {
     public class BlobStorageService
     {
-        private readonly string connectionString = "Server=tcp:eventease1.database.windows.net,1433;Initial Catalog=EventEaseDB;Persist Security Info=False;User ID=ST10104037;Password=EventEase123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;";
-        private readonly string containerName = "images";
+        private readonly string _connectionString;
+        private readonly string _containerName;
+
+        public BlobStorageService(IConfiguration configuration)
+        {
+            _connectionString = configuration["BlobStorage:ConnectionString"];
+            _containerName = configuration["BlobStorage:ContainerName"];
+        }
 
         public async Task<string> UploadAsync(IFormFile file)
         {
-            var blobServiceClient = new BlobServiceClient(connectionString);
-            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+
+            await containerClient.CreateIfNotExistsAsync();
 
             var blobClient = containerClient.GetBlobClient(file.FileName);
 

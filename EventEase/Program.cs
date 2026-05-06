@@ -1,5 +1,7 @@
+using EventEase.Models;
+using Azure.Storage.Blobs;
+using EventEase.Services;
 using Microsoft.EntityFrameworkCore;
-using EventEase.Models; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ builder.Services.AddControllersWithViews();
 // Add DbContext (Database connection)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<BlobStorageService>();
 
 var app = builder.Build();
 
