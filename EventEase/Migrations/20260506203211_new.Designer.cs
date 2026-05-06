@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEase.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260323005536_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260506203211_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -80,7 +80,7 @@ namespace EventEase.Migrations
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("Venue", b =>
+            modelBuilder.Entity("EventEase.Models.Venue", b =>
                 {
                     b.Property<int>("VenueId")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace EventEase.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Venue", "Venue")
+                    b.HasOne("EventEase.Models.Venue", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -129,7 +129,7 @@ namespace EventEase.Migrations
 
             modelBuilder.Entity("EventEase.Models.Event", b =>
                 {
-                    b.HasOne("Venue", "Venue")
+                    b.HasOne("EventEase.Models.Venue", "Venue")
                         .WithMany()
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.NoAction)

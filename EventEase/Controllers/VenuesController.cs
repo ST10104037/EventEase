@@ -6,16 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using EventEase.Models;
+using EventEase.Services; // Required for BlobStorageService
+using Microsoft.AspNetCore.Http; // Required for IFormFile
 
 namespace EventEase.Controllers
 {
     public class VenuesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly BlobStorageService _blobService;
 
-        public VenuesController(ApplicationDbContext context)
+        // The constructor now injects BOTH the database context and the blob service
+        public VenuesController(ApplicationDbContext context, BlobStorageService blobService)
         {
             _context = context;
+            _blobService = blobService;
         }
 
         // GET: Venues
@@ -27,17 +32,12 @@ namespace EventEase.Controllers
         // GET: Venues/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var venue = await _context.Venues
                 .FirstOrDefaultAsync(m => m.VenueId == id);
-            if (venue == null)
-            {
-                return NotFound();
-            }
+
+            if (venue == null) return NotFound();
 
             return View(venue);
         }
@@ -49,14 +49,18 @@ namespace EventEase.Controllers
         }
 
         // POST: Venues/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue)
+        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity")] Venue venue, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    // Upload to Azure and save the URL to the database model
+                    venue.ImageUrl = await _blobService.UploadAsync(imageFile);
+                }
+
                 _context.Add(venue);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -67,48 +71,38 @@ namespace EventEase.Controllers
         // GET: Venues/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var venue = await _context.Venues.FindAsync(id);
-            if (venue == null)
-            {
-                return NotFound();
-            }
+            if (venue == null) return NotFound();
+
             return View(venue);
         }
 
         // POST: Venues/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue, IFormFile? imageFile)
         {
-            if (id != venue.VenueId)
-            {
-                return NotFound();
-            }
+            if (id != venue.VenueId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        // Replace the old image URL with the new one from Azure
+                        venue.ImageUrl = await _blobService.UploadAsync(imageFile);
+                    }
+
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!VenueExists(venue.VenueId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!VenueExists(venue.VenueId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -118,17 +112,12 @@ namespace EventEase.Controllers
         // GET: Venues/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var venue = await _context.Venues
                 .FirstOrDefaultAsync(m => m.VenueId == id);
-            if (venue == null)
-            {
-                return NotFound();
-            }
+
+            if (venue == null) return NotFound();
 
             return View(venue);
         }

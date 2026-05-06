@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EventEase.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EventEase.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EventEase.Controllers
 {
@@ -19,10 +20,24 @@ namespace EventEase.Controllers
         }
 
         // GET: Bookings
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin,BookingSpecialist")]
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Bookings.Include(b => b.Event).Include(b => b.Venue);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var bookings = _context.Bookings
+                .Include(b => b.Event)
+                .Include(b => b.Venue)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                bookings = bookings.Where(b =>
+                    b.Event.EventName.Contains(searchString) ||
+                    b.BookingId.ToString() == searchString);
+            }
+
+            return View(await bookings.ToListAsync());
         }
 
         // GET: Bookings/Details/5
@@ -53,21 +68,31 @@ namespace EventEase.Controllers
             return View();
         }
 
-        // POST: Bookings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("BookingId,EventId,VenueId,BookingDate")] Booking booking)
         {
+            // Check for double booking
+            bool isDoubleBooked = _context.Bookings.Any(b =>
+                b.VenueId == booking.VenueId &&
+                b.BookingDate.Date == booking.BookingDate.Date);
+
+            if (isDoubleBooked)
+            {
+                ModelState.AddModelError("BookingDate", "This venue is already booked on the selected date.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Booking successfully created!";
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventId", booking.EventId);
-            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueId", booking.VenueId);
+
+            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventName", booking.EventId);
+            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueName", booking.VenueId);
             return View(booking);
         }
 

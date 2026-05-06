@@ -7,9 +7,10 @@ namespace EventEase.Controllers
     {
         private readonly BlobStorageService _blobService;
 
-        public UploadController()
+        // ✅ Dependency Injection
+        public UploadController(BlobStorageService blobService)
         {
-            _blobService = new BlobStorageService();
+            _blobService = blobService;
         }
 
         [HttpPost]
