@@ -6,9 +6,8 @@
         public string EventName { get; set; }
         public DateTime EventDate { get; set; }
         public string Description { get; set; }
-
+        public string ImageUrl { get; set; } // Added for event visuals
         public int VenueId { get; set; }
         public Venue Venue { get; set; }
     }
-
 }

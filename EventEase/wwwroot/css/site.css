@@ -1,114 +1,115 @@
 ﻿/* 🌈 Global Styles */
-.text-center {
-    padding: 30px;
-}
-
 body {
     background: linear-gradient(135deg, #ff4da6, #4da6ff);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #fff;
+    min-height: 100vh;
+}
+
+/* 📦 Glassmorphism Container */
+.container, .glass-card {
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 /* 🧾 Headings */
 h1, h2, h3, h4 {
-    font-weight: bold;
+    font-weight: 800;
     color: #ffffff;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
 }
 
-/* 📦 Containers */
-.container {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    margin-top: 20px;
-}
-
-/* 🔘 Buttons */
+/* 🔘 Sophisticated Buttons */
 .btn {
-    border-radius: 25px;
-    padding: 8px 18px;
+    border-radius: 50px;
+    padding: 12px 25px;
     font-weight: bold;
-    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: none;
 }
 
 .btn-primary {
-    background-color: #ff4da6;
-    border: none;
+    background: linear-gradient(45deg, #ff1a8c, #ff4da6);
+    box-shadow: 0 4px 15px rgba(255, 77, 166, 0.4);
 }
 
     .btn-primary:hover {
-        background-color: #ff1a8c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 77, 166, 0.6);
+        background: #ff1a8c;
     }
 
 .btn-secondary {
-    background-color: #4da6ff;
-    border: none;
+    background: linear-gradient(45deg, #1a8cff, #4da6ff);
+    box-shadow: 0 4px 15px rgba(77, 166, 255, 0.4);
 }
 
     .btn-secondary:hover {
-        background-color: #1a8cff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(77, 166, 255, 0.6);
+        background: #1a8cff;
     }
 
-/* 📋 Tables */
-table {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-th {
-    background-color: #ff4da6;
-    color: white;
-}
-
-td {
-    color: #fff;
-}
-
-/* 📥 Forms */
-input, select, textarea {
-    border-radius: 10px !important;
+/* 📥 Forms & Inputs */
+.form-control {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 12px !important;
     border: none;
-    padding: 8px;
+    padding: 12px 15px;
+    color: #333 !important;
+}
+
+.form-floating > label {
+    color: #666;
 }
 
 /* 🧭 Navbar */
 .navbar {
-    background: linear-gradient(90deg, #ff4da6, #4da6ff) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 0;
 }
 
-.navbar-brand, .nav-link {
-    color: #fff !important;
-    font-weight: bold;
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: -1px;
 }
 
-    .nav-link:hover {
-        text-decoration: underline;
+/* 📋 Tables */
+.table {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+    .table thead th {
+        background-color: rgba(255, 77, 166, 0.8);
+        border: none;
+        text-transform: uppercase;
+        font-size: 0.85rem;
     }
 
-/* 🖼 Images */
-img {
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-}
-
-/* 📦 Cards (optional if you use them later) */
-.card {
-    border-radius: 15px;
-    background-color: rgba(255,255,255,0.15);
-    color: white;
-}
-
-/* ✨ Hover Effects */
-tr:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
+    .table td {
+        border-color: rgba(255, 255, 255, 0.1);
+        vertical-align: middle;
+    }
 
 /* 🧾 Footer */
 footer {
-    color: #fff;
-    text-align: center;
-    margin-top: 20px;
+    padding: 20px 0;
+    font-size: 0.9rem;
+    font-weight: 300;
 }

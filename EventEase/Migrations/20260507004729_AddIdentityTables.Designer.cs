@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEase.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260506230101_AddIdentityTables")]
+    [Migration("20260507004729_AddIdentityTables")]
     partial class AddIdentityTables
     {
         /// <inheritdoc />
@@ -70,6 +70,10 @@ namespace EventEase.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("VenueId")
                         .HasColumnType("int");
 
@@ -91,9 +95,20 @@ namespace EventEase.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPhone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -106,6 +121,30 @@ namespace EventEase.Migrations
                     b.HasKey("VenueId");
 
                     b.ToTable("Venues");
+
+                    b.HasData(
+                        new
+                        {
+                            VenueId = 1,
+                            Capacity = 500,
+                            ContactEmail = "events@grand.com",
+                            ContactPhone = "555-0101",
+                            ImageUrl = "https://images.unsplash.com/photo-1519167758481-83f550bb49b3",
+                            IsAvailable = true,
+                            Location = "Downtown",
+                            VenueName = "Grand Ballroom"
+                        },
+                        new
+                        {
+                            VenueId = 2,
+                            Capacity = 150,
+                            ContactEmail = "info@skyline.com",
+                            ContactPhone = "555-0202",
+                            ImageUrl = "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3",
+                            IsAvailable = false,
+                            Location = "Rooftop",
+                            VenueName = "Skyline Terrace"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -133,6 +172,20 @@ namespace EventEase.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "admin-role-id-constant",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "specialist-role-id-constant",
+                            Name = "Specialist",
+                            NormalizedName = "SPECIALIST"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

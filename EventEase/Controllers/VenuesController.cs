@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EventEase.Models;
+using EventEase.Services; // Required for BlobStorageService
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http; // Required for IFormFile
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using EventEase.Models;
-using EventEase.Services; // Required for BlobStorageService
-using Microsoft.AspNetCore.Http; // Required for IFormFile
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace EventEase.Controllers
 {
+    [Authorize(Roles = "Admin, Specialist")]
+
     public class VenuesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -43,14 +46,16 @@ namespace EventEase.Controllers
         }
 
         // GET: Venues/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
-
+     
         // POST: Venues/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity")] Venue venue, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
@@ -69,6 +74,7 @@ namespace EventEase.Controllers
         }
 
         // GET: Venues/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();

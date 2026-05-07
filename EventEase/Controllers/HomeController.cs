@@ -1,21 +1,30 @@
-using System.Diagnostics;
 using EventEase.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace EventEase.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ApplicationDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View();
+            var venues = from v in _context.Venues select v;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                venues = venues.Where(s => s.VenueName.Contains(searchString) || s.Location.Contains(searchString));
+            }
+
+            ViewBag.Events = await _context.Events.Take(3).ToListAsync();
+            return View(await venues.ToListAsync());
         }
 
         public IActionResult Privacy()

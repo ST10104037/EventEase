@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace EventEase.Controllers
 {
+    [Authorize(Roles = "Admin, Specialist")]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;

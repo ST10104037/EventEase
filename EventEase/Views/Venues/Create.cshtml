@@ -1,56 +1,40 @@
 ﻿@model Venue
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Venue";
 }
 
-<h1>Create</h1>
+<div class="container glass-card" style="max-width: 700px;">
+    <h1 class="text-center mb-4">🏙️ Register New Venue</h1>
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h4>Venue</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="VenueName" class="control-label"></label>
-                <input asp-for="VenueName" class="form-control" />
+        <div class="row">
+            <div class="col-md-12 form-floating mb-3">
+                <input asp-for="VenueName" class="form-control" placeholder="Venue Name" />
+                <label class="ms-2" asp-for="VenueName"></label>
                 <span asp-validation-for="VenueName" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl"></label>
-                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL here" />
+
+            <div class="col-md-8 form-floating mb-3">
+                <input asp-for="Location" class="form-control" placeholder="Location" />
+                <label class="ms-2" asp-for="Location"></label>
             </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
+
+            <div class="col-md-4 form-floating mb-3">
+                <input asp-for="Capacity" class="form-control" placeholder="Capacity" />
+                <label class="ms-2" asp-for="Capacity"></label>
             </div>
-            <div class="form-group">
-                <label asp-for="Capacity" class="control-label"></label>
-                <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label>Upload Venue Image</label>
+
+            <div class="col-md-12 mb-4">
+                <label class="form-label fw-bold small text-uppercase">Venue Photo</label>
                 <input type="file" name="imageFile" class="form-control" />
+                <div class="form-text text-white-50">Upload a high-quality image of the space.</div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Add Venue</button>
+            <a asp-action="Index" class="btn btn-link text-white">Back to Venues</a>
+        </div>
+    </form>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

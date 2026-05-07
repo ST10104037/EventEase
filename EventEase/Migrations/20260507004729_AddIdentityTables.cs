@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace EventEase.Migrations
 {
     /// <inheritdoc />
@@ -48,6 +50,25 @@ namespace EventEase.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Venues",
+                columns: table => new
+                {
+                    VenueId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VenueName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Venues", x => x.VenueId);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +177,71 @@ namespace EventEase.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VenueId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.EventId);
+                    table.ForeignKey(
+                        name: "FK_Events_Venues_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venues",
+                        principalColumn: "VenueId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
+                columns: table => new
+                {
+                    BookingId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<int>(type: "int", nullable: false),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
+                    BookingDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bookings", x => x.BookingId);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId");
+                    table.ForeignKey(
+                        name: "FK_Bookings_Venues_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venues",
+                        principalColumn: "VenueId");
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "admin-role-id-constant", null, "Admin", "ADMIN" },
+                    { "specialist-role-id-constant", null, "Specialist", "SPECIALIST" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Venues",
+                columns: new[] { "VenueId", "Capacity", "ContactEmail", "ContactPhone", "ImageUrl", "IsAvailable", "Location", "VenueName" },
+                values: new object[,]
+                {
+                    { 1, 500, "events@grand.com", "555-0101", "https://images.unsplash.com/photo-1519167758481-83f550bb49b3", true, "Downtown", "Grand Ballroom" },
+                    { 2, 150, "info@skyline.com", "555-0202", "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3", false, "Rooftop", "Skyline Terrace" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +280,21 @@ namespace EventEase.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_EventId",
+                table: "Bookings",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_VenueId",
+                table: "Bookings",
+                column: "VenueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_VenueId",
+                table: "Events",
+                column: "VenueId");
         }
 
         /// <inheritdoc />
@@ -215,10 +316,19 @@ namespace EventEase.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Bookings");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Venues");
         }
     }
 }
