@@ -19,38 +19,75 @@
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Fix Multiple Cascade Paths
-            // Booking -> Event (No Cascade)
+            // --- 1. Fix Multiple Cascade Paths ---
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Event)
                 .WithMany()
                 .HasForeignKey(b => b.EventId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Booking -> Venue (No Cascade)
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.Venue)
                 .WithMany()
                 .HasForeignKey(b => b.VenueId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // Event -> Venue (No Cascade)
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.Venue)
                 .WithMany()
                 .HasForeignKey(e => e.VenueId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            // 2. Seed Roles (Your existing code)
-            string adminRoleId = "admin-role-id-constant"; // Use a constant string for seeding to avoid duplicates
-            string specialistRoleId = "specialist-role-id-constant";
+            // --- 2. Identity Seed Data ---
 
+            // IDs for consistency
+            string adminRoleId = "admin-role-id-constant";
+            string specialistRoleId = "specialist-role-id-constant";
+            string adminUserId = "admin-user-id-constant";
+            string specialistUserId = "specialist-user-id-constant";
+
+            // Seed Roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" },
                 new IdentityRole { Id = specialistRoleId, Name = "Specialist", NormalizedName = "SPECIALIST" }
             );
 
-            // 3. Seed Venues (Your existing code)
+            // Create Password Hasher
+            var hasher = new PasswordHasher<IdentityUser>();
+
+            // Seed Admin User
+            modelBuilder.Entity<IdentityUser>().HasData(new IdentityUser
+            {
+                Id = adminUserId,
+                UserName = "admin@eventease.com",
+                NormalizedUserName = "ADMIN@EVENTEASE.COM",
+                Email = "admin@eventease.com",
+                NormalizedEmail = "ADMIN@EVENTEASE.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "Admin123!"), // Change this password!
+                SecurityStamp = string.Empty
+            });
+
+            // Seed Specialist User
+            modelBuilder.Entity<IdentityUser>().HasData(new IdentityUser
+            {
+                Id = specialistUserId,
+                UserName = "specialist@eventease.com",
+                NormalizedUserName = "SPECIALIST@EVENTEASE.COM",
+                Email = "specialist@eventease.com",
+                NormalizedEmail = "SPECIALIST@EVENTEASE.COM",
+                EmailConfirmed = true,
+                PasswordHash = hasher.HashPassword(null, "Specialist123!"), // Change this password!
+                SecurityStamp = string.Empty
+            });
+
+            // Assign Users to Roles
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string> { RoleId = adminRoleId, UserId = adminUserId },
+                new IdentityUserRole<string> { RoleId = specialistRoleId, UserId = specialistUserId }
+            );
+
+            // --- 3. Seed Venues ---
             modelBuilder.Entity<Venue>().HasData(
                 new Venue
                 {

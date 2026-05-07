@@ -1,32 +1,32 @@
-﻿@model EventEase.Models.Event
+﻿@model EventEase.Models.Venue
 @{
-    ViewData["Title"] = "Event Details";
+    ViewData["Title"] = "Venue Details";
 }
 
 <div class="container glass-card" style="max-width: 800px;">
     <div class="row">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="col-12 mb-4 text-center">
+                <img src="@Model.ImageUrl" class="img-fluid rounded shadow" style="max-height: 400px; width: 100%; object-fit: cover;" />
+            </div>
+        }
         <div class="col-md-12 text-center mb-4">
-            <h1 class="display-5 fw-bold">@Model.EventName</h1>
-            <span class="badge bg-primary px-3 py-2">ID: #@Model.EventId</span>
+            <h1 class="display-5 fw-bold">@Model.VenueName</h1>
         </div>
         <div class="col-md-6">
-            <div class="mb-4">
-                <label class="text-white-50 small text-uppercase fw-bold">Date & Time</label>
-                <h4 class="fw-light">@Model.EventDate.ToString("f")</h4>
-            </div>
-            <div class="mb-4">
-                <label class="text-white-50 small text-uppercase fw-bold">Venue</label>
-                <h4>@Model.Venue?.VenueName</h4>
-            </div>
+            <p><strong>Location:</strong> @Model.Location</p>
         </div>
-        <div class="col-md-6">
-            <label class="text-white-50 small text-uppercase fw-bold">Description</label>
-            <p class="lead">@Model.Description</p>
+        <div class="col-md-6 text-end">
+            <p><strong>Capacity:</strong> @Model.Capacity people</p>
         </div>
     </div>
     <hr />
     <div class="d-flex justify-content-between mt-4">
         <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        <a asp-action="Edit" asp-route-id="@Model.EventId" class="btn btn-primary px-5">Edit Event</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.VenueId" class="btn btn-primary px-5">Edit Venue</a>
+        }
     </div>
 </div>

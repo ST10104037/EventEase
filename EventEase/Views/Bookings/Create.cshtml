@@ -1,27 +1,36 @@
 ﻿@model EventEase.Models.Booking
 @{
-    ViewData["Title"] = ViewContext.RouteData.Values["action"].ToString() == "Create" ? "New Booking" : "Edit Booking";
+    bool isEdit = ViewContext.RouteData.Values["action"].ToString() == "Edit";
+    ViewData["Title"] = isEdit ? "Edit Booking" : "New Booking";
 }
 
 <div class="container glass-card" style="max-width: 600px;">
     <h1 class="text-center">@ViewData["Title"]</h1>
-    <p class="text-center text-white-50">Fill in the details to secure the venue.</p>
+    <p class="text-center text-white-50">Assign an event to a venue for a specific date.</p>
     <hr />
-    <form asp-action="@ViewContext.RouteData.Values["action"]">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @if (ViewData["Title"].ToString() == "Edit Booking")
+
+    <form asp-action="@(isEdit ? "Edit" : "Create")">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        @if (isEdit)
         {
             <input type="hidden" asp-for="BookingId" />
         }
 
         <div class="form-floating mb-3">
-            <select asp-for="EventId" class="form-control" asp-items="ViewBag.EventId"></select>
-            <label asp-for="EventId">Select Event</label>
+            <select asp-for="EventId" class="form-control" asp-items="ViewBag.EventId">
+                <option value="">-- Choose Event --</option>
+            </select>
+            <label asp-for="EventId">Event Name</label>
+            <span asp-validation-for="EventId" class="text-danger"></span>
         </div>
 
         <div class="form-floating mb-3">
-            <select asp-for="VenueId" class="form-control" asp-items="ViewBag.VenueId"></select>
-            <label asp-for="VenueId">Select Venue</label>
+            <select asp-for="VenueId" class="form-control" asp-items="ViewBag.VenueId">
+                <option value="">-- Choose Venue --</option>
+            </select>
+            <label asp-for="VenueId">Venue Name</label>
+            <span asp-validation-for="VenueId" class="text-danger"></span>
         </div>
 
         <div class="form-floating mb-4">
@@ -31,8 +40,16 @@
         </div>
 
         <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-primary btn-lg">@(ViewData["Title"].ToString() == "New Booking" ? "Create Booking" : "Save Changes")</button>
-            <a asp-action="Index" class="btn btn-link text-white">Cancel and Go Back</a>
+            <button type="submit" class="btn btn-primary btn-lg">
+                @(isEdit ? "Save Changes" : "Confirm Booking")
+            </button>
+            <a asp-action="Index" class="btn btn-link text-white">Cancel</a>
         </div>
     </form>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

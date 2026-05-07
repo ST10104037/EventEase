@@ -5,83 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - EventEase</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Add asp-append-version="true" to the end of your stylesheet link -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-
-        body {
-            /* The Eye-Catching Gradient */
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6a88 100%);
-            background-attachment: fixed;
-            color: white;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            min-height: 100vh;
-        }
-
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        .navbar-glass {
-            background: rgba(0, 0, 0, 0.2) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-            transition: all 0.3s;
-        }
-
-            .nav-link:hover {
-                color: #fff !important;
-                transform: translateY(-1px);
-            }
-
-        .btn-primary {
-            background: #ff6a88;
-            border: none;
-            box-shadow: 0 4px 15px rgba(255, 106, 136, 0.4);
-        }
-
-            .btn-primary:hover {
-                background: #ff5073;
-            }
-
-        .footer {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
-            color: rgba(255,255,255,0.6);
-            padding: 1.5rem 0;
-            margin-top: 50px;
-        }
-
-        /* Forms Styling */
-        .form-control {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--glass-border);
-            color: white !important;
-        }
-
-            .form-control:focus {
-                background: rgba(255,255,255,0.2);
-                box-shadow: none;
-                border-color: #ff6a88;
-            }
-
-            .form-control::placeholder {
-                color: rgba(255,255,255,0.5);
-            }
-    </style>
+ 
 </head>
 <body>
     <header>
@@ -118,6 +45,22 @@
 
     <div class="container">
         <main role="main" class="pb-3">
+            <div class="container">
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>⚠️ Error:</strong> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>✅ Success:</strong> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
             @RenderBody()
         </main>
     </div>

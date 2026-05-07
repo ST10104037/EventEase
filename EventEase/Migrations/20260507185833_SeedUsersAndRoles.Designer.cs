@@ -4,6 +4,7 @@ using EventEase.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEase.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507185833_SeedUsersAndRoles")]
+    partial class SeedUsersAndRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,6 +60,7 @@ namespace EventEase.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EventDate")
@@ -67,6 +71,7 @@ namespace EventEase.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VenueId")
@@ -91,12 +96,15 @@ namespace EventEase.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ContactEmail")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactPhone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
@@ -274,13 +282,13 @@ namespace EventEase.Migrations
                         {
                             Id = "admin-user-id-constant",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "629350b1-b681-4b8a-bcd3-fce91a2be254",
+                            ConcurrencyStamp = "02626a3f-033f-4334-a43a-a870c97af6b4",
                             Email = "admin@eventease.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EVENTEASE.COM",
                             NormalizedUserName = "ADMIN@EVENTEASE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKFWJa106N0974cRdnnyYTnLEay8URTk238RAJLcaVQJlflhPHKvRwMOJNEiQz6R3A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPVECTQiAImt/1pH40iBe7Y63eDbcun2M37oc5gvXQAKMqbFisyt1KwM1hVlFGZl7w==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -290,13 +298,13 @@ namespace EventEase.Migrations
                         {
                             Id = "specialist-user-id-constant",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "02c7179a-2121-445c-893d-6e7920aa8e9b",
+                            ConcurrencyStamp = "f4209278-2cd1-471c-8392-868496797b7d",
                             Email = "specialist@eventease.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SPECIALIST@EVENTEASE.COM",
                             NormalizedUserName = "SPECIALIST@EVENTEASE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG8Q7PR91jKw6hAERvVBuG2dj2luDwepG5zCdpweBMgaGS7wGRuKAQI28PCaw0o72A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEArnoIbNL2LBxnOzfnOt8mSFGtRZvakrz7asINB3VweBjQmYXPQc1Tj1x7hvUzXGLw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

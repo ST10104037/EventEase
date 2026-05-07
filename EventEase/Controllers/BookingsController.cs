@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EventEase.Controllers
 {
@@ -21,7 +17,6 @@ namespace EventEase.Controllers
         }
 
         // GET: Bookings
-        [Authorize(Roles = "Admin,BookingSpecialist")]
         public async Task<IActionResult> Index(string searchString)
         {
             ViewData["CurrentFilter"] = searchString;
@@ -44,19 +39,14 @@ namespace EventEase.Controllers
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings
                 .Include(b => b.Event)
                 .Include(b => b.Venue)
                 .FirstOrDefaultAsync(m => m.BookingId == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
+
+            if (booking == null) return NotFound();
 
             return View(booking);
         }
@@ -64,31 +54,54 @@ namespace EventEase.Controllers
         // GET: Bookings/Create
         public IActionResult Create()
         {
-            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventId");
-            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueId");
+            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventName");
+            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueName");
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("BookingId,EventId,VenueId,BookingDate")] Booking booking)
         {
-            // Check for double booking
+            // Fix: Explicitly remove navigation properties from validation
+            ModelState.Remove("Event");
+            ModelState.Remove("Venue");
+
+            // 1. Fetch the associated event to check its scheduled time
+            var selectedEvent = await _context.Events.AsNoTracking().FirstOrDefaultAsync(e => e.EventId == booking.EventId);
+
+            DateTime now = DateTime.Now;
+
+            // 2. Double Booking Check
             bool isDoubleBooked = _context.Bookings.Any(b =>
                 b.VenueId == booking.VenueId &&
                 b.BookingDate.Date == booking.BookingDate.Date);
 
             if (isDoubleBooked)
-            {
                 ModelState.AddModelError("BookingDate", "This venue is already booked on the selected date.");
+
+            // 3. Time Validation Logic
+            if (selectedEvent != null)
+            {
+                // Rule: No bookings for the past or today (must be at least 1 day in advance)
+                if (selectedEvent.EventDate.Date <= now.Date)
+                {
+                    ModelState.AddModelError("", "Bookings must be made at least 24 hours in advance. Same-day or past bookings are not permitted.");
+                }
+                
+                // Rule: Block if within 1 hour of the event start
+                double hoursRemaining = (selectedEvent.EventDate - now).TotalHours;
+                if (hoursRemaining > 0 && hoursRemaining < 1)
+                {
+                    ModelState.AddModelError("", "Emergency Lock: Cannot create a booking within 1 hour of the event start time.");
+                }
             }
 
             if (ModelState.IsValid)
             {
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Booking successfully created!";
+                TempData["SuccessMessage"] = "Booking confirmed!";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -97,35 +110,30 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // GET: Bookings/Edit/5
+        // Only Admins can edit historical booking data
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings.FindAsync(id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
-            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventId", booking.EventId);
-            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueId", booking.VenueId);
+            if (booking == null) return NotFound();
+
+            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventName", booking.EventId);
+            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueName", booking.VenueId);
             return View(booking);
         }
 
-        // POST: Bookings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("BookingId,EventId,VenueId,BookingDate")] Booking booking)
         {
-            if (id != booking.BookingId)
-            {
-                return NotFound();
-            }
+            if (id != booking.BookingId) return NotFound();
+
+            // Fix: Explicitly remove navigation properties from validation
+            ModelState.Remove("Event");
+            ModelState.Remove("Venue");
 
             if (ModelState.IsValid)
             {
@@ -136,60 +144,51 @@ namespace EventEase.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingExists(booking.BookingId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!BookingExists(booking.BookingId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventId", booking.EventId);
-            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueId", booking.VenueId);
+            ViewData["EventId"] = new SelectList(_context.Events, "EventId", "EventName", booking.EventId);
+            ViewData["VenueId"] = new SelectList(_context.Venues, "VenueId", "VenueName", booking.VenueId);
             return View(booking);
+
         }
 
-        // GET: Bookings/Delete/5
+        // Specialists and Admins can delete/cancel bookings
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var booking = await _context.Bookings
                 .Include(b => b.Event)
                 .Include(b => b.Venue)
                 .FirstOrDefaultAsync(m => m.BookingId == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
 
-            return View(booking);
+            return booking == null ? NotFound() : View(booking);
         }
 
-        // POST: Bookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check if there are any FUTURE bookings for this venue
+            bool hasActiveBookings = await _context.Bookings
+                .AnyAsync(b => b.VenueId == id && b.BookingDate >= DateTime.Now);
+
             var booking = await _context.Bookings.FindAsync(id);
-            if (booking != null)
+            if (hasActiveBookings)
             {
-                _context.Bookings.Remove(booking);
+                TempData["ErrorMessage"] = "This venue cannot be deleted because it has upcoming active bookings.";
+                return RedirectToAction(nameof(Delete), new { id = id });
             }
+
+            var venue = await _context.Venues.FindAsync(id);
+            if (venue != null) _context.Venues.Remove(venue);
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool BookingExists(int id)
-        {
-            return _context.Bookings.Any(e => e.BookingId == id);
-        }
+        private bool BookingExists(int id) => _context.Bookings.Any(e => e.BookingId == id);
     }
 }

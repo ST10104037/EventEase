@@ -1,18 +1,17 @@
-﻿@model Venue
+﻿@model EventEase.Models.Venue
 @{
-    ViewData["Title"] = "Add Venue";
+    ViewData["Title"] = "Register New Venue";
 }
 
 <div class="container glass-card" style="max-width: 700px;">
     <h1 class="text-center mb-4">🏙️ Register New Venue</h1>
-    <form asp-action="Create" enctype="multipart/form-data">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Create" enctype="multipart/form-data" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
 
         <div class="row">
             <div class="col-md-12 form-floating mb-3">
                 <input asp-for="VenueName" class="form-control" placeholder="Venue Name" />
                 <label class="ms-2" asp-for="VenueName"></label>
-                <span asp-validation-for="VenueName" class="text-danger"></span>
             </div>
 
             <div class="col-md-8 form-floating mb-3">
@@ -25,10 +24,20 @@
                 <label class="ms-2" asp-for="Capacity"></label>
             </div>
 
+            <!-- Added missing fields to satisfy validation -->
+            <div class="col-md-6 form-floating mb-3">
+                <input asp-for="ContactEmail" class="form-control" placeholder="Email" />
+                <label class="ms-2" asp-for="ContactEmail"></label>
+            </div>
+
+            <div class="col-md-6 form-floating mb-3">
+                <input asp-for="ContactPhone" class="form-control" placeholder="Phone" />
+                <label class="ms-2" asp-for="ContactPhone"></label>
+            </div>
+
             <div class="col-md-12 mb-4">
                 <label class="form-label fw-bold small text-uppercase">Venue Photo</label>
                 <input type="file" name="imageFile" class="form-control" />
-                <div class="form-text text-white-50">Upload a high-quality image of the space.</div>
             </div>
         </div>
 
@@ -38,3 +47,8 @@
         </div>
     </form>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

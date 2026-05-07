@@ -1,53 +1,61 @@
-﻿@model Venue
-
+﻿@model EventEase.Models.Venue
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Venue";
 }
 
-<h1>Edit</h1>
+<div class="container glass-card" style="max-width: 700px;">
+    <h1 class="text-center mb-4">✏️ Edit Venue</h1>
+    <form asp-action="Edit" enctype="multipart/form-data" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h4>Venue</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="VenueId" />
-            <div class="form-group">
-                <label asp-for="VenueName" class="control-label"></label>
+        <!-- CRITICAL: Hidden fields so we don't lose data -->
+        <input type="hidden" asp-for="VenueId" />
+        <input type="hidden" asp-for="ImageUrl" />
+
+        <div class="row">
+            <div class="col-md-12 form-floating mb-3">
                 <input asp-for="VenueName" class="form-control" />
-                <span asp-validation-for="VenueName" class="text-danger"></span>
+                <label class="ms-2" asp-for="VenueName"></label>
             </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl"></label>
-                <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL here" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
+
+            <div class="col-md-12 form-floating mb-3">
                 <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
+                <label class="ms-2" asp-for="Location"></label>
             </div>
-            <div class="form-group">
-                <label asp-for="Capacity" class="control-label"></label>
+
+            <div class="col-md-6 form-floating mb-3">
                 <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
+                <label class="ms-2" asp-for="Capacity"></label>
             </div>
-            <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            <div class="col-md-6 form-floating mb-3">
+                <input asp-for="ContactEmail" class="form-control" />
+                <label class="ms-2" asp-for="ContactEmail"></label>
+            </div>
+            <div class="col-md-6 form-floating mb-3">
+    <!-- This was missing! Without it, SQL throws the NULL error -->
+    <input asp-for="ContactPhone" class="form-control" />
+    <label class="ms-2" asp-for="ContactPhone"></label>
+    <span asp-validation-for="ContactPhone" class="text-danger"></span>
 </div>
+            <div class="col-md-12 mb-4">
+                <label class="form-label fw-bold small text-uppercase">Replace Photo</label>
+                <input type="file" name="imageFile" class="form-control" />
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <p class="mt-2 small">Current image: <a href="@Model.ImageUrl" target="_blank">View</a></p>
+                }
+            </div>
+        </div>
 
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Save Changes</button>
+            <a asp-action="Index" class="btn btn-link text-white">Cancel</a>
+        </div>
+    </form>
+</div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

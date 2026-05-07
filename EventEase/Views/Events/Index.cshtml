@@ -6,27 +6,50 @@
 <div class="container bg-transparent border-0 shadow-none">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h1 class="display-4 fw-bold">🎊 Explore Events</h1>
-        <a asp-action="Create" class="btn btn-primary btn-lg shadow">➕ Create Event</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create" class="btn btn-primary btn-lg shadow">➕ Create Event</a>
+        }
     </div>
 
     <div class="row">
         @foreach (var item in Model)
         {
             <div class="col-md-4 mb-4">
-                <div class="glass-card h-100 p-4 transition-hover">
+                <div class="glass-card h-100 p-4 transition-hover d-flex flex-column">
+
+                    <!-- 🖼️ ADDED IMAGE BLOCK -->
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@item.ImageUrl" alt="@item.EventName" class="img-fluid rounded mb-3 shadow-sm" style="height: 200px; object-fit: cover; width: 100%;" />
+                    }
+                    else
+                    {
+                        <!-- Fallback placeholder if no image exists -->
+                        <div class="bg-secondary bg-opacity-25 rounded mb-3 d-flex align-items-center justify-content-center" style="height: 200px; width: 100%;">
+                            <i class="bi bi-calendar-event fs-1 text-white-50"></i>
+                        </div>
+                    }
+
                     <h3 class="fw-bold">@item.EventName</h3>
-                    <p class="badge bg-secondary mb-3">@item.EventDate.ToString("MMMM dd, yyyy")</p>
-                    <p class="text-white-50 text-truncate-2">@item.Description</p>
+                    <p class="badge bg-secondary mb-3 align-self-start">@item.EventDate.ToString("MMMM dd, yyyy")</p>
+                    <p class="text-white-50 text-truncate-2 flex-grow-1">@item.Description</p>
+
                     <div class="d-flex align-items-center mb-4">
                         <i class="bi bi-building me-2"></i>
                         <span class="small">@item.Venue?.VenueName</span>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-sm btn-light">Details</a>
-                        <div>
-                            <a asp-action="Edit" asp-route-id="@item.EventId" class="text-white me-2"><i class="bi bi-pencil"></i></a>
-                            <a asp-action="Delete" asp-route-id="@item.EventId" class="text-danger"><i class="bi bi-trash"></i></a>
-                        </div>
+
+                    <div class="d-flex justify-content-between mt-auto">
+                        <a asp-action="Details" asp-route-id="@item.EventId" class="btn btn-sm btn-secondary">Details</a>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.EventId" class="text-white me-2"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.EventId" class="text-danger"><i class="bi bi-trash"></i></a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

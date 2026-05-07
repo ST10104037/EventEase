@@ -4,6 +4,7 @@ using EventEase.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventEase.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507203154_MakeContactFieldsNullable")]
+    partial class MakeContactFieldsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,6 +60,7 @@ namespace EventEase.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventId"));
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EventDate")
@@ -67,6 +71,7 @@ namespace EventEase.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("VenueId")
@@ -274,13 +279,13 @@ namespace EventEase.Migrations
                         {
                             Id = "admin-user-id-constant",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "629350b1-b681-4b8a-bcd3-fce91a2be254",
+                            ConcurrencyStamp = "87b63975-e48a-4247-9322-21db32c044cf",
                             Email = "admin@eventease.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EVENTEASE.COM",
                             NormalizedUserName = "ADMIN@EVENTEASE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKFWJa106N0974cRdnnyYTnLEay8URTk238RAJLcaVQJlflhPHKvRwMOJNEiQz6R3A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJhs4B7qXAIjoviqm7ddlM1HKLWLUQNOu7OQQWaFXX+x/PsnWH/Mh5pl9xtxHTkbBQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -290,13 +295,13 @@ namespace EventEase.Migrations
                         {
                             Id = "specialist-user-id-constant",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "02c7179a-2121-445c-893d-6e7920aa8e9b",
+                            ConcurrencyStamp = "34ebfc97-e6eb-4ce3-8571-8e354b210a1b",
                             Email = "specialist@eventease.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SPECIALIST@EVENTEASE.COM",
                             NormalizedUserName = "SPECIALIST@EVENTEASE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG8Q7PR91jKw6hAERvVBuG2dj2luDwepG5zCdpweBMgaGS7wGRuKAQI28PCaw0o72A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEJpINYoSC2vNcyy5m+hiGm5NdnAJBqX5QvAvMHFJ0Sp2Fl6I6/V39DeBj3zk/9B4nw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

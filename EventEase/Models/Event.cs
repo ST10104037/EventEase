@@ -3,11 +3,16 @@
     public class Event
     {
         public int EventId { get; set; }
-        public string EventName { get; set; }
+        public string EventName { get; set; } = string.Empty; // Required
         public DateTime EventDate { get; set; }
-        public string Description { get; set; }
-        public string ImageUrl { get; set; } // Added for event visuals
+
+        // Make these nullable with ?
+        public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
+
         public int VenueId { get; set; }
-        public Venue Venue { get; set; }
+
+        // Navigation property should be nullable to avoid validation issues during Create
+        public Venue? Venue { get; set; }
     }
 }

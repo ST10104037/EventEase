@@ -10,13 +10,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// 2. Identity Service Registration (Requires Microsoft.AspNetCore.Identity.UI package)
-builder.Services.AddDefaultIdentity<IdentityUser>(options => {
+// Do NOT use AddDefaultUI() if you want to completely block scaffolded registration.
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
     options.SignIn.RequireConfirmedAccount = false;
-    options.Password.RequireDigit = false; // Optional: Makes testing easier
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Optional but recommended: Block the /Register route entirely using an endpoint filter or redirect in your startup configuration.
 
 // 3. Custom Services
 builder.Services.AddScoped<BlobStorageService>();

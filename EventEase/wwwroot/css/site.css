@@ -1,115 +1,222 @@
-﻿/* 🌈 Global Styles */
-body {
-    background: linear-gradient(135deg, #ff4da6, #4da6ff);
-    background-attachment: fixed;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #fff;
-    min-height: 100vh;
+﻿/* 
+    🌸 EVENTEASE WHIMSICAL GLASSMORPHISM THEME 
+    Cleaned, Animated, and High-Visibility
+*/
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.18);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --primary-gradient: linear-gradient(45deg, #ff1a8c, #ff4da6);
+    --secondary-gradient: linear-gradient(45deg, #1a8cff, #4da6ff);
+    --accent-flower: #ffeb3b;
 }
 
-/* 📦 Glassmorphism Container */
-.container, .glass-card {
-    background-color: rgba(255, 255, 255, 0.15);
-    padding: 40px;
-    border-radius: 20px;
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-    margin-top: 30px;
-    margin-bottom: 30px;
+/* 🌈 Global Styles & Animated Background */
+body {
+    background: linear-gradient(-45deg, #ff4da6, #4da6ff, #764ba2, #ff6a88);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    background-attachment: fixed;
+    color: #ffffff;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 🦋 Floating Butterfly Decorations */
+body::before, body::after {
+    content: "🦋";
+    position: fixed;
+    font-size: 2rem;
+    z-index: -1;
+    opacity: 0.6;
+    animation: floatButterflies 20s linear infinite;
+}
+
+body::after {
+    content: "🌸";
+    animation-delay: -10s;
+    left: 10%;
+}
+
+@keyframes floatButterflies {
+    0% {
+        transform: translate(-100vw, 20vh) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(100vw, 80vh) rotate(360deg);
+    }
+}
+
+/* 📦 Containers & Glass Cards */
+.container, .glass-card, .card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #ffffff !important;
+}
+
+    /* Subtle "Lively" Hover for Cards */
+    .glass-card:hover, .card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+        background: rgba(255, 255, 255, 0.22) !important;
+    }
 
 /* 🧾 Headings */
-h1, h2, h3, h4 {
+h1, h2, h3, h4, .display-4 {
     font-weight: 800;
-    color: #ffffff;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    color: #ffffff !important;
+    text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
     margin-bottom: 20px;
 }
 
-/* 🔘 Sophisticated Buttons */
+/* 🔘 Sophisticated & Animated Buttons */
 .btn {
     border-radius: 50px;
-    padding: 12px 25px;
+    padding: 12px 28px;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: none;
+    color: white !important;
 }
 
 .btn-primary {
-    background: linear-gradient(45deg, #ff1a8c, #ff4da6);
-    box-shadow: 0 4px 15px rgba(255, 77, 166, 0.4);
+    background: var(--primary-gradient);
+    box-shadow: 0 4px 15px rgba(255, 26, 140, 0.4);
 }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(255, 77, 166, 0.6);
-        background: #ff1a8c;
-    }
 
 .btn-secondary {
-    background: linear-gradient(45deg, #1a8cff, #4da6ff);
-    box-shadow: 0 4px 15px rgba(77, 166, 255, 0.4);
+    background: var(--secondary-gradient);
 }
 
-    .btn-secondary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(77, 166, 255, 0.6);
-        background: #1a8cff;
+.btn:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+/* 📥 Form Inputs & Visibility Fixes */
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 12px !important;
+    border: 2px solid transparent;
+    padding: 12px 15px;
+    color: #222 !important; /* High visibility black text */
+    font-weight: 500;
+}
+
+    .form-control:focus {
+        border-color: #ff4da6;
+        box-shadow: 0 0 15px rgba(255, 77, 166, 0.3);
     }
 
-/* 📥 Forms & Inputs */
-.form-control {
-    background-color: rgba(255, 255, 255, 0.9) !important;
-    border-radius: 12px !important;
-    border: none;
-    padding: 12px 15px;
-    color: #333 !important;
-}
+    /* Crucial Dropdown Fix: Options must be visible */
+    select.form-control option, .form-select option {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
 
-.form-floating > label {
-    color: #666;
-}
-
-/* 🧭 Navbar */
-.navbar {
-    background: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 15px 0;
-}
-
-.navbar-brand {
-    font-size: 1.5rem;
-    letter-spacing: -1px;
-}
-
-/* 📋 Tables */
+/* 📋 High Contrast Tables */
 .table {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     overflow: hidden;
+    color: white !important;
 }
 
     .table thead th {
-        background-color: rgba(255, 77, 166, 0.8);
+        background-color: rgba(255, 26, 140, 0.8) !important;
+        color: white !important;
         border: none;
-        text-transform: uppercase;
-        font-size: 0.85rem;
     }
 
     .table td {
-        border-color: rgba(255, 255, 255, 0.1);
-        vertical-align: middle;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-/* 🧾 Footer */
-footer {
-    padding: 20px 0;
-    font-size: 0.9rem;
-    font-weight: 300;
+/* 🧭 Navbar Glass Style */
+.navbar {
+    background: rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 0;
 }
+
+.navbar-brand {
+    font-weight: 900;
+    font-size: 1.7rem;
+    color: #fff !important;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* 🖼️ Image Styling for Events */
+.card img {
+    border-radius: 15px;
+    transition: transform 0.5s ease;
+}
+
+.card:hover img {
+    transform: rotate(-1deg) scale(1.05);
+}
+
+/* 🌸 Force White Text on all Card elements */
+.card *, .glass-card * {
+    color: #ffffff !important;
+}
+
+/* Except for specific form elements inside cards */
+.card input, .card select, .card textarea {
+    color: #000000 !important;
+}
+/* 🔘 High-Contrast Button Fix */
+.btn-light, .btn-outline-light {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    color: #222 !important; /* Forces dark text on light buttons */
+    border: 1px solid #ddd !important;
+}
+
+/* 👤 Identity/Login Fix: Force Labels to be visible */
+.form-label, label {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* 📥 Staff Management / Dropdown Fix */
+.dropdown-menu {
+    background-color: #ffffff !important;
+}
+
+.dropdown-item {
+    color: #333 !important;
+}
+
+    .dropdown-item:hover {
+        background-color: #ff4da6 !important;
+        color: #fff !important;
+    }

@@ -9,7 +9,8 @@
 
         public DateTime BookingDate { get; set; }
 
-        public Event Event { get; set; }
-        public Venue Venue { get; set; }
+        // Change these to nullable using '?'
+        public Event? Event { get; set; }
+        public Venue? Venue { get; set; }
     }
 }

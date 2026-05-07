@@ -1,38 +1,32 @@
 ﻿using EventEase.Models;
-using EventEase.Services; // Required for BlobStorageService
+using EventEase.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http; // Required for IFormFile
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EventEase.Controllers
 {
     [Authorize(Roles = "Admin, Specialist")]
-
     public class VenuesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly BlobStorageService _blobService;
 
-        // The constructor now injects BOTH the database context and the blob service
         public VenuesController(ApplicationDbContext context, BlobStorageService blobService)
         {
             _context = context;
             _blobService = blobService;
         }
 
-        // GET: Venues
+        // --- PUBLIC ACCESS ALLOWED HERE ---
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Venues.ToListAsync());
         }
 
-        // GET: Venues/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -45,24 +39,25 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Create
+        // --- RESTRICTED TO ADMIN ONLY BEYOND THIS POINT ---
+
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
-     
-        // POST: Venues/Create
+
+        // --- POST: Venues/Create ---
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity")] Venue venue, IFormFile? imageFile)
+        // Added ContactEmail and ContactPhone to the Bind list
+        public async Task<IActionResult> Create([Bind("VenueId,VenueName,Location,Capacity,ContactEmail,ContactPhone")] Venue venue, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
                 if (imageFile != null && imageFile.Length > 0)
                 {
-                    // Upload to Azure and save the URL to the database model
                     venue.ImageUrl = await _blobService.UploadAsync(imageFile);
                 }
 
@@ -70,10 +65,12 @@ namespace EventEase.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // DEBUG: If you hit this point, validation failed. 
+            // Check your Venue model for [Required] fields you missed.
             return View(venue);
         }
 
-        // GET: Venues/Edit/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -85,10 +82,11 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // POST: Venues/Edit/5
+        // --- POST: Venues/Edit ---
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl")] Venue venue, IFormFile? imageFile)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("VenueId,VenueName,Location,Capacity,ImageUrl,ContactEmail,ContactPhone")] Venue venue, IFormFile? imageFile)
         {
             if (id != venue.VenueId) return NotFound();
 
@@ -98,9 +96,10 @@ namespace EventEase.Controllers
                 {
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        // Replace the old image URL with the new one from Azure
+                        // Upload new image if provided
                         venue.ImageUrl = await _blobService.UploadAsync(imageFile);
                     }
+                    // If no new image, it keeps the hidden ImageUrl from the form
 
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
@@ -115,7 +114,7 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -128,17 +127,27 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // POST: Venues/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var venue = await _context.Venues.FindAsync(id);
+            // Check if there are any bookings for this venue
+            bool hasBookings = await _context.Bookings.AnyAsync(b => b.VenueId == id);
+
             if (venue != null)
             {
                 _context.Venues.Remove(venue);
             }
+            if (hasBookings)
+            {
+                // Add a model error that we can display as an alert
+                TempData["ErrorMessage"] = "Cannot delete venue: It has active bookings associated with it.";
+                return RedirectToAction(nameof(Delete), new { id = id });
+            }
 
+            _context.Venues.Remove(venue);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
