@@ -32,11 +32,11 @@
                 {
                     <tr>
                         <td class="fw-bold">@item.BookingDate.ToString("MMM dd, yyyy")</td>
-                        <td><span class="badge bg-light text-dark">@item.Event?.EventName</span></td>
-                        <td><i class="bi bi-geo-alt"></i> @item.Venue?.VenueName</td>
+                        <td><span class="bi bi-geo-alt">@item.Event?.EventName</span></td>
+                        <td><span class="bi bi-geo-alt">@item.Venue?.VenueName</span></td>
                         <td class="text-end">
-                            <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline-light border-0"><i class="bi bi-pencil"></i></a>
-                            <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline-light border-0"><i class="bi bi-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline border-0"><i class="bi bi-pencil"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline-dark border-0"><i class="bi bi-eye"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.BookingId" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></a>
                         </td>
                     </tr>

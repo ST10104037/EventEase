@@ -133,14 +133,50 @@ h1, h2, h3, h4, .display-4 {
         box-shadow: 0 0 15px rgba(255, 77, 166, 0.3);
     }
 
-    /* Crucial Dropdown Fix: Options must be visible */
-    select.form-control option, .form-select option {
-        background-color: #ffffff !important;
-        color: #000000 !important;
+/* 🎨 HIGH-VISIBILITY DROPDOWNS (No more white-on-white!) */
+select.form-control,
+.form-select,
+.form-control {
+    background: rgba(40, 0, 60, 0.7) !important; /* Deep translucent purple */
+    color: #ffffff !important; /* Crisp white text */
+    border: 2px solid rgba(255, 77, 166, 0.5) !important; /* Pink glow border */
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px);
+}
+
+    /* This styles the actual list that pops out */
+    select.form-control option,
+    .form-select option {
+        background-color: #2d004d !important; /* Solid dark purple for the list */
+        color: #ffffff !important;
     }
+
+/* 🔘 BUTTON VISIBILITY FIX (For "Details" and "View" buttons) */
+.btn-light, .btn-info, [class*="details-btn"] {
+    background: linear-gradient(45deg, #ffffff, #e0e0e0) !important;
+    color: #333 !important; /* Dark text on light buttons */
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3) !important;
+    font-weight: bold !important;
+}
+
+    .btn-light:hover {
+        background: #ffffff !important;
+        transform: scale(1.05);
+    }
+
+/* 🛠️ IDENTITY & LOGIN FIELD LABELS */
+/* Makes sure labels like "Username" or "Venue Name" are bright and readable */
+label, .form-label {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4) !important;
+    margin-bottom: 8px !important;
+}
 
 /* 📋 High Contrast Tables */
 .table {
+    font-weight: 900;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     overflow: hidden;
@@ -148,12 +184,14 @@ h1, h2, h3, h4, .display-4 {
 }
 
     .table thead th {
+        font-weight: 900;
         background-color: rgba(255, 26, 140, 0.8) !important;
         color: white !important;
         border: none;
     }
 
     .table td {
+        font-weight: 900;
         border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
