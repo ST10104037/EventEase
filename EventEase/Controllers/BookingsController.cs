@@ -21,19 +21,25 @@ namespace EventEase.Controllers
         {
             ViewData["CurrentFilter"] = searchString;
 
-            var bookings = _context.Bookings
+            var bookingsQuery = _context.Bookings
                 .Include(b => b.Event)
                 .Include(b => b.Venue)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                bookings = bookings.Where(b =>
-                    b.Event.EventName.Contains(searchString) ||
-                    b.BookingId.ToString() == searchString);
+                // Use .Contains for the name, and only parse the ID if the string is numeric
+                if (int.TryParse(searchString, out int idSearch))
+                {
+                    bookingsQuery = bookingsQuery.Where(b => b.BookingId == idSearch || b.Event.EventName.Contains(searchString));
+                }
+                else
+                {
+                    bookingsQuery = bookingsQuery.Where(b => b.Event.EventName.Contains(searchString));
+                }
             }
 
-            return View(await bookings.ToListAsync());
+            return View(await bookingsQuery.ToListAsync());
         }
 
         // GET: Bookings/Details/5
@@ -172,21 +178,20 @@ namespace EventEase.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Check if there are any FUTURE bookings for this venue
-            bool hasActiveBookings = await _context.Bookings
-                .AnyAsync(b => b.VenueId == id && b.BookingDate >= DateTime.Now);
-
+            // Find the specific booking we want to delete
             var booking = await _context.Bookings.FindAsync(id);
-            if (hasActiveBookings)
+
+            if (booking == null)
             {
-                TempData["ErrorMessage"] = "This venue cannot be deleted because it has upcoming active bookings.";
-                return RedirectToAction(nameof(Delete), new { id = id });
+                return NotFound();
             }
 
-            var venue = await _context.Venues.FindAsync(id);
-            if (venue != null) _context.Venues.Remove(venue);
-
+            // Logic: Just remove the booking. 
+            // (You don't need to check hasActiveBookings here because this IS the booking you are deleting!)
+            _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Booking successfully cancelled.";
             return RedirectToAction(nameof(Index));
         }
         private bool BookingExists(int id) => _context.Bookings.Any(e => e.BookingId == id);

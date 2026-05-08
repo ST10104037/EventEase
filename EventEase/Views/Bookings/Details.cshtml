@@ -1,32 +1,49 @@
-﻿@model EventEase.Models.Event
+﻿@model EventEase.Models.Booking
 @{
-    ViewData["Title"] = "Event Details";
+    ViewData["Title"] = "Booking Details";
 }
 
 <div class="container glass-card" style="max-width: 800px;">
     <div class="row">
         <div class="col-md-12 text-center mb-4">
-            <h1 class="display-5 fw-bold">@Model.EventName</h1>
-            <span class="badge bg-primary px-3 py-2">ID: #@Model.EventId</span>
+            <h1 class="display-5 fw-bold">Booking Details</h1>
+            <span class="badge bg-primary px-3 py-2">Booking ID: #@Model.BookingId</span>
         </div>
+
         <div class="col-md-6">
             <div class="mb-4">
-                <label class="text-white-50 small text-uppercase fw-bold">Date & Time</label>
-                <h4 class="fw-light">@Model.EventDate.ToString("f")</h4>
+                <label class="text-white-50 small text-uppercase fw-bold">Event Name</label>
+                <h4 class="fw-light">@Model.Event?.EventName</h4>
             </div>
             <div class="mb-4">
                 <label class="text-white-50 small text-uppercase fw-bold">Venue</label>
                 <h4>@Model.Venue?.VenueName</h4>
             </div>
         </div>
+
         <div class="col-md-6">
-            <label class="text-white-50 small text-uppercase fw-bold">Description</label>
-            <p class="lead">@Model.Description</p>
+            <div class="mb-4">
+                <label class="text-white-50 small text-uppercase fw-bold">Scheduled Date</label>
+                <h4 class="fw-light">@Model.BookingDate.ToString("f")</h4>
+            </div>
+            <div class="mb-4">
+                <label class="text-white-50 small text-uppercase fw-bold">Location</label>
+                <p>@Model.Venue?.Location</p>
+            </div>
         </div>
     </div>
-    <hr />
+
+    <hr class="border-white-50" />
+
     <div class="d-flex justify-content-between mt-4">
         <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-        <a asp-action="Edit" asp-route-id="@Model.EventId" class="btn btn-primary px-5">Edit Event</a>
+        <div>
+            <!-- Only show Edit if user is Admin, as per your Controller restrictions -->
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Edit" asp-route-id="@Model.BookingId" class="btn btn-primary px-4 me-2">Edit Booking</a>
+            }
+            <a asp-action="Delete" asp-route-id="@Model.BookingId" class="btn btn-danger px-4">Cancel Booking</a>
+        </div>
     </div>
 </div>
